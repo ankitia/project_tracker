@@ -56,9 +56,9 @@ public class SpringWebConfig extends WebMvcConfigurerAdapter {
         		/*Server configuration*/
         		System.out.println("Server configuration");
                 /*dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-                dataSource.setUrl("jdbc:mysql://74.207.234.174:3306/athena_web?autoReconnect=true");
-                dataSource.setUsername("root");
-                dataSource.setPassword("Admin123*+@");*/
+                dataSource.setUrl("jdbc:mysql://pluggtoolmumbai.ckxezqztkeob.ap-south-1.rds.amazonaws.com:3306/project_tracker?autoReconnect=true&relaxAutoCommit=true");
+                dataSource.setUsername("plugg_tool_m");
+                dataSource.setPassword("PlU!G_2019_m");*/
         		
         		/*dataSource.setDriverClassName("com.mysql.jdbc.Driver");
                 dataSource.setUrl("jdbc:mysql://pluggtool.c3nvqp9bnujz.us-east-1.rds.amazonaws.com:3306/athena?autoReconnect=true");

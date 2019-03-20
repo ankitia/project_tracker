@@ -20,7 +20,8 @@
 
     <!-- Bootstrap core CSS -->
     <link href='<c:url value="/resources/front2/css/bootstrap.min.css"></c:url>' rel="stylesheet">
-    
+    <link href='<c:url value="/resources/front2/css/chat.css"></c:url>' rel="stylesheet">
+       
     <link href="<c:url value="/resources/front2/css/custom_style.css"></c:url>" rel="stylesheet">
     
     <!-- Custom Fonts -->
@@ -92,8 +93,40 @@ display: block;
 
 </style>        
 
+   
+	  <!-- Start Date Picker -->  
+      <link href = "https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css"    rel = "stylesheet">
+      <script src = "https://code.jquery.com/jquery-1.10.2.js"></script>
+      <script src = "https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+	  <!-- End Date Picker -->
+	   
+      <script>
+         $(function() { 
+            $( "#startDate" ).datepicker({
+            changeMonth: true,
+            changeYear: true,
+            yearRange: '1930:2030',
+            dateFormat: 'dd-mm-yy'  
+        });
 
+            $( "#deliveryDate" ).datepicker({
+                changeMonth: true,
+                changeYear: true,
+                yearRange: '1930:2030',
+                dateFormat: 'dd-mm-yy'  
+            });
 
+            $( "#nextUpdateDate" ).datepicker({
+                changeMonth: true,
+                changeYear: true,
+                yearRange: '1930:2030',
+                dateFormat: 'dd-mm-yy'  
+            });            
+            
+            
+         });
+         
+        </script> 
 
   </head>
 
@@ -103,7 +136,7 @@ display: block;
     <!-- Navigation End-->
 
     <!-- Page Content -->
-     
+      
       <div class="row"> 
         <div class="col-lg-12"> 
         	<p class="text-right mt-6" >     
@@ -118,8 +151,8 @@ display: block;
         </div>
        </div>
       <br />
-      
-      <form action="insertProject" method="post" enctype="multipart/form-data" >  
+       
+      <form action="<%=request.getContextPath() %>/insertProject" method="post" enctype="multipart/form-data" >  
       
       
       
@@ -166,6 +199,13 @@ display: block;
 				</div>
 			</div>
       	</div>
+      	
+      	<div class="col-sm-2 offset-md-1">
+      		<div class="form-group">  
+				<label for="selectDepartment">Project Name</label>
+				<label for="selectDepartment">${project.name }</label>
+			</div>  
+		</div>
       </div>
 
   
@@ -175,8 +215,9 @@ display: block;
 			<div class="nav flex-column nav-tabs" id="v-pills-tab" role="tablist" aria-orientation="vertical" >
 			  <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">Project Information</a>
 			  <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">Project Specifications</a>
-			  <!-- <a class="nav-link" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false">Project Plan</a> 
-			  <a class="nav-link" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">Settings</a> -->
+			  <a class="nav-link" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false">Project Feedback</a>
+			  <!-- <a class="nav-link" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false">Email Conversion</a> --> 
+			   <a class="nav-link" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">Email Conversion</a>
 			</div>
 		</div>        
         <div class="col-lg-8"> <!-- style="border: 1px solid #dee2e6; padding: 25px;  margin-left: -32px;" -->  
@@ -275,21 +316,27 @@ display: block;
 		  </div>
 		  <div class="col-lg-3">
 			  <div class="form-group">
-		          <label for="projectType">Start Date</label> 
-		          <div class="input-group pb-modalreglog-input-group"> 
-		              <input type="date" class="form-control" id="startDate" value="${project.startDate }" name="startDate" placeholder="Start Date" required>
+		           <label for="projectType">Start Date</label> 
+		          <div class="input-group pb-modalreglog-input-group">
+		          		<fmt:parseDate pattern="yyyy-MM-dd" value="${project.startDate }" var="parsedDate" />
+						<fmt:formatDate value="${parsedDate}" var="parsedDate" pattern="dd-MM-yyyy" />
+				        <%-- ${parsedDate }    --%> 
+		           
+		              <input type="text" class="form-control" id="startDate" value="${parsedDate }" name="startDate" placeholder="Start Date" required>
 		              <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>  
 		          </div>
 		      </div>
 		      
 		      <div class="form-group">
 		          <label for="projectType">Delivery Date</label>
-		          <div class="input-group pb-modalreglog-input-group">
-		              <input type="date" class="form-control" id="deliveryDate" value="${project.deliveryDate }"  name="deliveryDate" placeholder="Delivery Date" required>
+		          		<div class="input-group pb-modalreglog-input-group">
+		        		 <fmt:parseDate pattern="yyyy-MM-dd HH:mm:ss" value="${project.deliveryDate }" var="parsedDate" />
+						<fmt:formatDate value="${parsedDate}" var="parsedDate" pattern="dd-MM-yyyy" />
+		              <input type="text" class="form-control" id="deliveryDate" value="${parsedDate }"  name="deliveryDate" placeholder="Delivery Date" required>
 		              <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>  
 		          </div>
 		      </div>
-		      
+		        
 		      <div class="form-group">  
 		          <label for="estimateTarget">Estimate Target</label>
 		          <div class="input-group pb-modalreglog-input-group">
@@ -356,9 +403,54 @@ display: block;
 				</div>
 			  </div>
 		  </div>
+		  
+		 <div class="col-lg-3">
+		  <div class="form-group">
+	          <label for="projectType">Deliver Till Now</label>
+	          <div class="input-group pb-modalreglog-input-group">
+	              <input type="text" class="form-control" id="delivered_till_now" value="${project.deliveredTillNow }"  name="deliveredTillNow" placeholder="Deliver Till Now" required>
+	              <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>  
+	          </div>
+	      </div>
+		 </div>      
+		  <div class="col-lg-3">
+		  		<label for="projectType">Next Delivery(Estimate)</label>
+	          <div class="input-group pb-modalreglog-input-group">
+	              <input type="text" class="form-control" id="delivery" value="${project.delivery }"  name="delivery" placeholder="Delivery" required>
+	              <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>  
+	          </div>
+		  		
+		  </div>
+		  
+		  <div class="col-lg-3">
+		  	  <label for="projectType">Next Update Date</label>  
+	          <div class="input-group pb-modalreglog-input-group">
+	          			<fmt:parseDate pattern="yyyy-MM-dd HH:mm:ss" value="${project.nextUpdateDate }" var="parsedDate" />
+						<fmt:formatDate value="${parsedDate}" var="nextUpdateDate" pattern="dd-MM-yyyy" />
+	              <input type="text" class="form-control" id="nextUpdateDate" value="${nextUpdateDate }"  name="nextUpdateDate" placeholder="Delivery" required>
+	              <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>  
+	          </div> 
+		  </div>
+		  
+		  <div class="col-lg-3">
+		  	  <label for="projectType">Resources</label>
+	          <div class="input-group pb-modalreglog-input-group">
+	              <input type="text" class="form-control" id="resources" value="${project.resources }"  name="resources" placeholder="Resources" required>
+	              <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>  
+	          </div>
+		  </div>
+		    
+		  <div class="col-lg-12" style="margin-bottom: 20px;">
+		  		<label for="projectType">Notes</label>
+	          <div class="input-group pb-modalreglog-input-group">
+	          		<textarea rows="3" class="form-control" cols="120"  name="notes">${project.notes }</textarea>
+	              	<span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>    
+	          </div>
+		  </div>
+		  
 		  <div class="col-lg-12">  
 		  		<!-- <button class="btn btn-primary" onclick="insertProject();" value="Save">Save</button> -->
-		  		<input type="submit" class="btn btn-primary" value="Save">   
+		  		<input type="submit" class="btn btn-primary" value="Update">   
 		  </div>
 		  </div>
 		  
@@ -377,7 +469,7 @@ display: block;
 			     </div>   
 			     <div class="col-lg-6">
 			      
-				     <div class="form-group" style="margin-top: 20px;">
+				     <div class="form-group" style="margin-top: 20px;">  
 				     	<!-- <label for="exampleFormControlTextarea1">Attachment</label> -->
 				     <div class="input-group">
 						  <div class="input-group-prepend"> 
@@ -387,8 +479,9 @@ display: block;
 						    <input type="file" class="custom-file-input" id="exampleInputFile" name="exampleInputFile" aria-describedby="inputGroupFileAddon01">
 						    <label class="custom-file-label" for="exampleInputFile">Choose file</label>
 						  </div>
-						</div>		        
-			      </div>
+						</div>	         
+						<a href="//${project.sopPath }" target="_blank"  >${project.sopPath }</a>	        
+			      </div> 
 			     </div>
 			     <div class="col-lg-8">
 			     	<div class="form-group"> 
@@ -404,29 +497,228 @@ display: block;
 			     </div> 
 			     
 			     <div class="col-lg-12"> 
-				  		<input type="submit" class="btn btn-primary" value="Save">   
+				  		<input type="submit" class="btn btn-primary" value="Update">   
 				  </div> 
 			</div> 
 
 		  </div>
-		  <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">.tab 1 tab 1
-		  	tab 1tab 1tab 1tab 1tab 1tab 1tab 1tab 1tab 1tab 1tab 1tab 1tab 1tab 1tab 1tab 1</div>
-		  <div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">...</div>
+		  <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">
+		  
+		  <div class="row"> 
+		  <div class="col-lg-12"> 
+		     	<div class="form-group"> 
+				  <label for="feedbackLog">Feedback Log</label>
+				  <textarea class="form-control rounded-0"  name="feedbackLog" id="feedbackLog" rows="5">${feedbackLog }</textarea>
+				  <input type="hidden" name="escalationLog" id="escalationLog"> 
+				  
+				</div>
+		     	<%-- <div class="form-group"> 
+				  <label for="escalationLog">Escalation Log </label>
+				  <textarea class="form-control rounded-0"  name="escalationLog" id="escalationLog" rows="5">${escalationLog }</textarea>
+				</div> --%>
+		     <div class="custom-file">
+			    <input type="file" class="custom-file-input" id="filePath" name="filePath" aria-describedby="inputGroupFileAddon01">
+			    <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+			  </div>
+			  
+			  <div class="form-group">   
+			  		<br />     
+			  		<input type="submit" class="btn btn-primary" value="Add" />   
+			  </div>
+		  </div>     
+		  <div class="col-lg-12">
+		  
+		  
+		<label for="feedbackLog">Feedback Log</label> 
+<div class="messaging">
+      <div class="inbox_msg">
+         
+        <div class="mesgs">
+          <div class="msg_history">
+             
+            <c:forEach var="feedbackList" items="${feedbackList }">
+             	<fmt:parseDate pattern="yyyy-MM-dd HH:mm:ss" value="${feedbackList.createdDate }" var="parsedDate" />
+				<fmt:formatDate value="${parsedDate}" var="parsedDate" pattern="MMM dd" />
+				<c:choose> 
+	            	<c:when test="${feedbackList.createdBy == project.createdBy }">
+				          <div class="outgoing_msg">
+			              <div class="sent_msg"> 
+			                <p>${feedbackList.feedbackLog }</p>    
+			                <span class="time_date">${feedbackList.fullName } | ${parsedDate }</span> </div>
+			            </div>
+	            	</c:when>
+	            	<c:otherwise>
+			            <div class="incoming_msg">
+			              <div class="incoming_msg_img"> <img title="${feedbackList.fullName }" src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+			              <div class="received_msg">
+			                <div class="received_withd_msg">  
+			                  <p>${feedbackList.feedbackLog }</p> 
+			                  <span class="time_date">${feedbackList.fullName } | ${parsedDate }</span></div>
+			              </div>
+			            </div>	
+	            	</c:otherwise>
+	            </c:choose>
+	            
+	            
+            </c:forEach>
+            
+            
+            
+            
+            <!-- <div class="incoming_msg">
+              <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+              <div class="received_msg">
+                <div class="received_withd_msg">
+                  <p>Test which is a new approach to have all
+                    solutions</p>
+                  <span class="time_date"> 11:01 AM    |    June 9</span></div>
+              </div>
+            </div> --> 
+           <!--  <div class="outgoing_msg">
+              <div class="sent_msg">
+                <p>Test which is a new approach to have all
+                  solutions</p>
+                <span class="time_date"> 11:01 AM    |    June 9</span> </div>
+            </div>
+            <div class="incoming_msg">
+              <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+              <div class="received_msg">
+                <div class="received_withd_msg">
+                  <p>Test, which is a new approach to have</p>
+                  <span class="time_date"> 11:01 AM    |    Yesterday</span></div>
+              </div>
+            </div>
+            <div class="outgoing_msg">
+              <div class="sent_msg">
+                <p>Apollo University, Delhi, India Test</p>
+                <span class="time_date"> 11:01 AM    |    Today</span> </div>
+            </div>
+            <div class="incoming_msg">
+              <div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+              <div class="received_msg">
+                <div class="received_withd_msg">
+                  <p>We work directly with our designers and suppliers,
+                    and sell direct to you, which means quality, exclusive
+                    products, at a price anyone can afford.</p>
+                  <span class="time_date"> 11:01 AM    |    Today</span></div>
+              </div>
+            </div> -->
+          </div>
+          <!-- <div class="type_msg">
+            <div class="input_msg_write">
+              <input type="text" class="write_msg" placeholder="Type a message" />
+              <button class="msg_send_btn" type="button"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+            </div>
+          </div> -->   
+        </div>
+      </div>
+      </div>
+      
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  </div>
+		  </div>
+		  </div>
+		  <div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  <div class="row"> 
+		  <div class="col-lg-12"> 
+		     	<div class="form-group"> 
+				  <label for="EmailLog">Email Log</label>
+				  <textarea class="form-control rounded-0"  name="emailLog" id="emailLog" rows="5">${emailLog }</textarea>
+				</div>
+		     <div class="custom-file">
+			    <input type="file" class="custom-file-input" id="emailfilePath" name="emailfilePath" aria-describedby="inputGroupFileAddon01">
+			    <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+			  </div>
+			  
+			  <div class="form-group">   
+			  		<br />     
+			  		<input type="submit" class="btn btn-primary" value="Add" />   
+			  </div>
+		  </div>     
+		  <div class="col-lg-12">
+		  
+		   
+		<label for="emailConversionLog">Email Conversion Log</label> 
+<div class="messaging">
+      <div class="inbox_msg">
+         
+        <div class="mesgs">
+          <div class="msg_history">
+              
+            <c:forEach var="emailList" items="${emailList }">
+             	<fmt:parseDate pattern="yyyy-MM-dd HH:mm:ss" value="${emailList.createdDate }" var="parsedDate" />
+				<fmt:formatDate value="${parsedDate}" var="parsedDate" pattern="MMM dd" />
+				<c:choose> 
+	            	<c:when test="${emailList.createdBy == project.createdBy }">
+				          <div class="outgoing_msg">
+			              <div class="sent_msg"> 
+			                <p>${emailList.emailLog }</p>    
+			                <span class="time_date">${emailList.fullName } | ${parsedDate }</span> </div>
+			            </div>
+	            	</c:when>
+	            	<c:otherwise>
+			            <div class="incoming_msg">
+			              <div class="incoming_msg_img"> <img title="${emailList.fullName }" src="https://ptetutorials.com/images/user-profile.png" alt="${emailList.fullName }"> </div>
+			              <div class="received_msg">
+			                <div class="received_withd_msg">  
+			                  <p>${emailList.feedbackLog }</p> 
+			                  <span class="time_date">${emailList.fullName } | ${parsedDate }</span></div>
+			              </div>
+			            </div>	
+	            	</c:otherwise>
+	            </c:choose>
+            </c:forEach>
+        </div>
+      </div>
+      </div>
+      
+		  </div>
+		  </div>
+		  
+		  </div>
 	   </div>
 </div>
 </div>
 
+<input type="hidden" name="projectId" value="${project.projectId }">
+
 </form>
 	<!-- Footer -->
     <%@include file="include/footer.jsp" %>
-
- <script src="<c:url value="/resources/front2/js/jquery/jquery.min.js"></c:url>"></script>
+  
+<%--  <script src="<c:url value="/resources/front2/js/jquery/jquery.min.js"></c:url>"></script> --%>
     <script src="<c:url value="/resources/front2/js/bootstrap/bootstrap.bundle.min.js"></c:url>"></script>
 
     
 <script type="text/javascript">
 
-function getDepartment(){
+function getDepartment(){ 
 	  
 	$("#DepartmentList").empty(); 
 	$.ajax({

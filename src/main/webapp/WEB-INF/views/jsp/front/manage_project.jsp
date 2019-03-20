@@ -91,9 +91,32 @@ display: block;
     }   
 
 </style>        
+	 
+	  <!-- Start Date Picker -->  
+      <link href = "https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css"    rel = "stylesheet">
+      <script src = "https://code.jquery.com/jquery-1.10.2.js"></script>
+      <script src = "https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+	  <!-- End Date Picker -->
+	   
+      <script>
+         $(function() { 
+            $( "#startDate" ).datepicker({
+            changeMonth: true,
+            changeYear: true,
+            yearRange: '1930:2030',
+            dateFormat: 'dd-mm-yy'  
+        });
 
+            $( "#deliveryDate" ).datepicker({
+                changeMonth: true,
+                changeYear: true,
+                yearRange: '1930:2030',
+                dateFormat: 'dd-mm-yy'  
+            });
 
-
+            
+         });
+      </script>
 
   </head>
 
@@ -118,15 +141,15 @@ display: block;
         </div>
        </div>
       <br />
+       
+      <form action="<%=request.getContextPath() %>/insertProjects" method="post" enctype="multipart/form-data" >  
       
-      <form action="insertProject" method="post" enctype="multipart/form-data" >  
+      <!-- <input type="hidden" name="projectId" > --> 
       
-      
-      
-      <div class="row">   
-      	<div class="col-sm-2 offset-md-3">
+      <div class="row">      
+      	<div class="col-sm-3 offset-md-3">
       		<div class="form-group">
-	        	<label for="selectCompany">Select Company</label>
+	        	<label for="selectCompany">Select Company/Customer</label>
 	            <div class="input-group pb-modalreglog-input-group" onchange="getDepartment()">
 	        	<select name="companyId" id="companyId" class="browser-default custom-select" required>
 			   		<option value="">Select Company</option>
@@ -136,9 +159,9 @@ display: block;
 			   </select>   
 			</div>
 			</div>      		
-      	</div>
-      	
-      	<div class="col-sm-2 offset-md-1">
+      	</div> 
+      	  
+      	<div class="col-sm-3 offset-md-1">
       		<div class="form-group">  
 				<label for="selectDepartment">Select Department</label>
 	            <div class="input-group pb-modalreglog-input-group">
@@ -157,8 +180,8 @@ display: block;
 			<div class="nav flex-column nav-tabs" id="v-pills-tab" role="tablist" aria-orientation="vertical" >
 			  <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">Project Information</a>
 			  <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">Project Specifications</a>
-			  <!-- <a class="nav-link" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false">Project Plan</a> 
-			  <a class="nav-link" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">Settings</a> -->
+			  <!-- <a class="nav-link" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false">Project Feedback</a> --> 
+			  <!-- <a class="nav-link" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">Settings</a> -->
 			</div>
 		</div>        
         <div class="col-lg-8"> <!-- style="border: 1px solid #dee2e6; padding: 25px;  margin-left: -32px;" -->  
@@ -236,7 +259,7 @@ display: block;
 			  <div class="form-group">
 		          <label for="projectType">Start Date</label>
 		          <div class="input-group pb-modalreglog-input-group">
-		              <input type="date" class="form-control" id="startDate"  name="startDate" placeholder="Start Date" required>
+		              <input type="text" class="form-control" id="startDate"  name="startDate" placeholder="Start Date" required>
 		              <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>  
 		          </div>
 		      </div>
@@ -244,9 +267,9 @@ display: block;
 		      <div class="form-group">
 		          <label for="projectType">Delivery Date</label>
 		          <div class="input-group pb-modalreglog-input-group">
-		              <input type="date" class="form-control" id="deliveryDate"  name="deliveryDate" placeholder="Delivery Date" required>
+		              <input type="text" class="form-control" id="deliveryDate"  name="deliveryDate" placeholder="Delivery Date" required>
 		              <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>  
-		          </div>
+		          </div> 
 		      </div>
 		      
 		      <div class="form-group">  
@@ -336,8 +359,19 @@ display: block;
 			</div> 
 
 		  </div>
-		  <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">.tab 1 tab 1
-		  	tab 1tab 1tab 1tab 1tab 1tab 1tab 1tab 1tab 1tab 1tab 1tab 1tab 1tab 1tab 1tab 1</div>
+		  <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">
+		  
+		  <div class="row"> 
+		  <div class="col-lg-3">
+			  <!-- <div class="form-group"> 
+		          <label for="projectName">Project Name</label>
+		          <div class="input-group pb-modalreglog-input-group">
+		              <input type="text" class="form-control" id="projectName"  name="name" placeholder="Project Name" >
+		              <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+		          </div>
+		      </div> --> 
+		      </div>
+		  </div>
 		  <div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">...</div>
 	   </div>
 </div>
@@ -347,8 +381,8 @@ display: block;
 	<!-- Footer -->
     <%@include file="include/footer.jsp" %>
 
- <script src="<c:url value="/resources/front2/js/jquery/jquery.min.js"></c:url>"></script>
-    <script src="<c:url value="/resources/front2/js/bootstrap/bootstrap.bundle.min.js"></c:url>"></script>
+  <%-- <script src="<c:url value="/resources/front2/js/jquery/jquery.min.js"></c:url>"></script> --%> 
+     <script src="<c:url value="/resources/front2/js/bootstrap/bootstrap.bundle.min.js"></c:url>"></script>  
 
     
 <script type="text/javascript">

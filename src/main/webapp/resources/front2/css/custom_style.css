@@ -1,5 +1,8 @@
  
-body {padding-top: 54px;}
+body {
+	padding-top: 54px;
+	font-size: 0.9rem;  	 	
+}
 
 @media (min-width: 992px) {
 	body {padding-top: 56px;}

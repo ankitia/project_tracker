@@ -22,9 +22,45 @@ public class Project {
 	private String estimateTarget;
 	private String deliverySchedule;
 	private String projectStatus;
+	private String deliveredTillNow;
+	private String delivery;
+	private String nextUpdateDate;
+	private String resources;
+	private String notes;
 	
 	
 	
+	
+	public String getDeliveredTillNow() {
+		return deliveredTillNow;
+	}
+	public void setDeliveredTillNow(String deliveredTillNow) {
+		this.deliveredTillNow = deliveredTillNow;
+	}
+	public String getNextUpdateDate() {
+		return nextUpdateDate;
+	}
+	public void setNextUpdateDate(String nextUpdateDate) {
+		this.nextUpdateDate = nextUpdateDate;
+	}
+	public String getDelivery() {
+		return delivery;
+	}
+	public void setDelivery(String delivery) {
+		this.delivery = delivery;
+	}
+	public String getResources() {
+		return resources;
+	}
+	public void setResources(String resources) {
+		this.resources = resources;
+	}
+	public String getNotes() {
+		return notes;
+	}
+	public void setNotes(String notes) {
+		this.notes = notes;
+	}
 	public String getProjDesc() {
 		return projDesc;
 	}

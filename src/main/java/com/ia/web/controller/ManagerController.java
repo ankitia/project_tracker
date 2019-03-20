@@ -3,28 +3,39 @@ package com.ia.web.controller;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.QueryParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ia.config.CommonUtility;
 import com.ia.web.Dao.CompanyDao;
 import com.ia.web.Dao.DepartmentDao;
 import com.ia.web.Dao.PersonContactDao;
 import com.ia.web.Dao.ProjectDao;
 import com.ia.web.Modal.CompanyMaster;
 import com.ia.web.Modal.DepartmentMaster;
+import com.ia.web.Modal.EmailConversion;
+import com.ia.web.Modal.FeedBack;
 import com.ia.web.Modal.PersonContact;
 import com.ia.web.Modal.Project;
+import com.ia.web.Modal.ProjectView;
 
 @Controller
 public class ManagerController {
@@ -113,12 +124,33 @@ public class ManagerController {
 	return "front/manage_project";
 	}
 	
+	@RequestMapping(value="/insertProjects", method= RequestMethod.POST)
+	 public String insertProjects(Project project,HttpSession session,HttpServletRequest request){
+		
+		   project.setStartDate(CommonUtility.getDate(project.getStartDate()));
+		   project.setDeliveryDate(CommonUtility.getDate(project.getDeliveryDate()));
+		
+		 projectDao.insertProject(project);
+		 return "redirect:dashboard";
+	}
+	
 	 @RequestMapping(value="/insertProject")
-	 @ResponseBody public boolean insertProject(@RequestParam("exampleInputFile") MultipartFile file,Project project,HttpSession session){
+	 public String insertProject(@RequestParam("exampleInputFile") MultipartFile file,Project project,HttpSession session,HttpServletRequest request,FeedBack feedBack,EmailConversion emailConversion){
 
 		 System.out.println(project.getStartDate() +""+ project.getName());
 		 
-		 	String path = "";
+		 System.out.println("Request path ::::"+ request.getContextPath()+"/resources/upload");
+		 
+		 
+		   project.setStartDate(CommonUtility.getDate(project.getStartDate()));
+		   project.setNextUpdateDate(CommonUtility.getDate(project.getNextUpdateDate()));
+		   project.setDeliveryDate(CommonUtility.getDate(project.getDeliveryDate()));
+		 
+		   if (!file.isEmpty()) {
+			   project.setSopPath(CommonUtility.fileUpload(file));
+		   }
+		   
+		 	/*String path = "";
 			String orignalFileName = file.getName();
 
 			if (!file.isEmpty()) {
@@ -129,6 +161,8 @@ public class ManagerController {
 					// Creating the directory to store file
 					String rootPath = System.getProperty("catalina.home");
 					path = rootPath + File.separator + "tmpFiles";
+					String rootPath = request.getContextPath()+"/resources/";
+					path = rootPath + File.separator + "upload";
 					File dir = new File(path);
 					if (!dir.exists())
 						dir.mkdirs();
@@ -151,11 +185,43 @@ public class ManagerController {
 			} else {
 				//return "You failed to upload " + name + " because the file was empty.";
 				System.out.println("File is empty");
-			}
+			}*/
 		 
 		 
 		 project.setCreatedBy((Integer) session.getAttribute("userId"));
-		 return projectDao.insertProject(project);
+		 
+		 System.out.println("Project Id ::"+project.getProjectId());
+		 
+		 if(project.getProjectId()>0) {
+			 projectDao.updateProject(project);
+			 
+			  
+			 boolean status = false;
+			 if(!feedBack.getFeedbackLog().equalsIgnoreCase("")) {
+				 /* Add new feedback */
+				 feedBack.setProjectId(project.getProjectId());
+				 feedBack.setCreatedBy((Integer) session.getAttribute("userId"));
+				 projectDao.insertFeedback(feedBack);	 
+				 status = true;
+			 }
+			 
+			 if(!emailConversion.getEmailLog().equalsIgnoreCase("")) {
+				 emailConversion.setProjectId(project.getProjectId());
+				 emailConversion.setCreatedBy((Integer) session.getAttribute("userId"));
+				 projectDao.insertEmailConv(emailConversion);
+				 status = true;
+			 }
+			 
+			 if(status) {
+				 return "redirect:updateProject/"+feedBack.getProjectId();
+			 }
+			 
+			 
+		 }else {
+			 projectDao.insertProject(project); 
+		 }
+		 
+		  return "redirect:dashboard";
 		 
 	 }
 	
@@ -180,6 +246,9 @@ public class ManagerController {
 			model.addAttribute("projectOwnerList", personContactDao.getPersonContact("active", 2));
 			model.addAttribute("taskOwnerList", personContactDao.getPersonContact("active", 3));
 			 
+			model.addAttribute("feedbackList",projectDao.getProjectFeedback(Integer.parseInt(projectId)));
+			
+			model.addAttribute("emailList",projectDao.getProjectEmailConv(Integer.parseInt(projectId)));
 			
 		return "front/update_project";
 		}
@@ -195,6 +264,13 @@ public class ManagerController {
 		
 		
 	return "front/person_to_contact";
+	}
+	
+
+	@RequestMapping(value = "/feedback")
+	public String feedback(Model model) {
+		model.addAttribute("companyList",companyDao.getCompany("all"));		
+	return "front/feedback";
 	}
 	
 	@RequestMapping(value = "/getPersonContact")
@@ -214,4 +290,37 @@ public class ManagerController {
 		 
 		return true+"";
 	}
+	
+	@RequestMapping(value = "/getProjectList")
+	@ResponseBody public List<ProjectView> getProjectList(ProjectView projectView) {
+		
+		System.out.println(projectView.getCompanyId() +"-------------------"+projectView.getDepartmentId());
+		
+		return projectDao.getProjects(Integer.parseInt(projectView.getCompanyId()), Integer.parseInt(projectView.getDepartmentId()));
+	}
+	
+	
+	@RequestMapping(value = "/files/{file_name}", method = RequestMethod.GET)
+	public void getFile(HttpServletRequest request, @PathVariable("file_name") String fileName, HttpServletResponse response) {
+	   
+		
+		//Authorized user will download the file
+        String dataDirectory = request.getServletContext().getRealPath("/WEB-INF/downloads/pdf/");
+        Path file = Paths.get(dataDirectory, fileName);
+        if (Files.exists(file))
+        {
+            response.setContentType("application/pdf");
+            response.addHeader("Content-Disposition", "attachment; filename="+fileName);
+            try
+            {
+                Files.copy(file, response.getOutputStream());
+                response.getOutputStream().flush();
+            }
+            catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+		
+	}
+	
 }

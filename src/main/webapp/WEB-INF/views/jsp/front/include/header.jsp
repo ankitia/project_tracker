@@ -47,6 +47,9 @@
             <li class="nav-item active">
               <a class="nav-link" href="<%=request.getContextPath() %>/manageProject">manageProject  </a>
             </li>   
+            <%-- <li class="nav-item active"> 
+              <a class="nav-link" href="<%=request.getContextPath() %>/feedback">Feedback  </a>
+            </li> --%>  
             <%-- <li class="nav-item active">
               <a class="nav-link" href="<%=request.getContextPath() %>/company/1">Company  </a>
             </li> --%>

@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,16 +34,15 @@ import org.supercsv.io.CsvBeanWriter;
 import org.supercsv.io.ICsvBeanWriter;
 import org.supercsv.prefs.CsvPreference;
 
+
 import com.ia.config.CommonUtility;
-import com.ia.web.Dao.CompanyDao;
 import com.ia.web.Dao.DatasetDao;
 import com.ia.web.Dao.HomeDAO;
 import com.ia.web.Dao.ProjectDao;
-import com.ia.web.Modal.CompanyMaster;
 import com.ia.web.Modal.Dataset;
 import com.ia.web.Modal.ExceptionResponse;
-import com.ia.web.Modal.Project;
 import com.ia.web.Modal.ProjectList;
+import com.ia.web.Modal.ProjectView;
 import com.ia.web.Modal.Scrap;
 import com.ia.web.Modal.TempUrl;
 import com.ia.web.Modal.User;
@@ -67,7 +68,9 @@ public class homeController {
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String printWelcome(ModelMap model,HttpServletRequest request) {
 		 
-		 
+		
+		
+		System.out.println("Path---"+request.getContextPath()+"/resources/upload");
 		
 		return "login";
 	}
@@ -184,12 +187,18 @@ public class homeController {
 				byte[] bytes = file.getBytes();
 
 				// Creating the directory to store file
-				String rootPath = System.getProperty("catalina.home");
-				path = rootPath + File.separator + "tmpFiles";
+				/*String rootPath = System.getProperty("catalina.home");
+				path = rootPath + File.separator + "tmpFiles";*/
+				
+				String rootPath = request.getContextPath()+"/resources/";
+				path = rootPath + File.separator + "upload";
 				File dir = new File(path);
 				if (!dir.exists())
 					dir.mkdirs();
 
+				
+				System.out.println("Request path ::::"+path);
+				
 				// Create the file on server
 				path = dir.getAbsolutePath() + File.separator + orignalFileName;
 				File serverFile = new File(dir.getAbsolutePath() + File.separator + orignalFileName);
@@ -569,7 +578,62 @@ public class homeController {
 	        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
 	    }
 	  
+	  @RequestMapping(value = "/test", method = RequestMethod.GET)
+		public String test() {
+			 
+			 System.out.println("test ---");
+			
+			return "front/test";
+		}
 	  
+	  @SuppressWarnings("unchecked")
+	@RequestMapping(value = "/sampleData", method = RequestMethod.GET)
+	  @ResponseBody public JSONArray sampleData() {
+			  
+			  JSONArray array = new JSONArray();
+			  JSONObject object = new JSONObject();
+			   
+			  /*object.put("OrderID","10248");
+			  object.put("OrderDate","1996-07-04");
+			  object.put("CustomerID","WILMK");
+			  object.put("ShipName","Vins et alcools Chevalier");
+			  object.put("Freight","32.3800");
+
+			  
+			  array.add(object);
+			  
+			  object = new JSONObject();
+			  object.put("OrderID","11248");
+			  object.put("OrderDate","1996-07-04");
+			  object.put("CustomerID","WILMK");
+			  object.put("ShipName","Vins et alcools Chevalier");
+			  object.put("Freight","30.3800");
+			  
+			  array.add(object);*/
+			  
+			  
+			  
+			  List<ProjectView> projectViews = projectDao.getProjects();
+			  for (int i = 0; i < projectViews.size(); i++) {
+				
+				  object = new JSONObject();
+				  object.put("projectID",projectViews.get(i).getProjectId());
+				  object.put("projectName",projectViews.get(i).getName());
+				  object.put("projectCode",projectViews.get(i).getProjectCode());
+				  object.put("projectDesc",projectViews.get(i).getProjDesc());
+				  object.put("projectOwner",projectViews.get(i).getProjectOwner());
+				  object.put("startDate",projectViews.get(i).getStartDate());
+				  object.put("projectEstimate",projectViews.get(i).getEstimateTarget());
+				  object.put("deliverySchedule",projectViews.get(i).getDeliverySchedule());
+				  
+				  array.add(object);
+			}
+			  
+			  
+			  
+			  
+			return array;
+		} 
 	    
 	
 }
