@@ -359,6 +359,7 @@ public class ProjectImpl implements ProjectDao {
 				feedBack.setCreatedDate(rs.getString("created_date"));
 				feedBack.setUserName(rs.getString("username"));
 				feedBack.setFullName(rs.getString("fname")+" "+rs.getString("lname"));
+				feedBack.setFilePath(rs.getString("file_path"));
 				conversions.add(feedBack);
 			}
 		}catch (Exception e) {
@@ -391,7 +392,7 @@ public class ProjectImpl implements ProjectDao {
 
 	@Override
 	public boolean insertEmailConvAttechment(int emailConId, String filePath) {
-		try(PreparedStatement ps = con.prepareStatement(userDao.getString("insertFeedbackAttechment"))){
+		try(PreparedStatement ps = con.prepareStatement(userDao.getString("insertEmailConvAttechment"))){
 			ps.setString(1,filePath);
 			ps.setInt(2,emailConId);
 			

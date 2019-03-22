@@ -227,7 +227,7 @@ public class ManagerController {
 				 
 				 MultipartFile emailfilePath = multipartRequest.getFile("emailfilePath") ;
 				    
-				 dataDirectory = request.getServletContext().getRealPath("/resources/feedback/");
+				 dataDirectory = request.getServletContext().getRealPath("/resources/emailconv/");
 				 if(!emailfilePath.isEmpty()) {
 					 projectDao.insertEmailConvAttechment(emailConvId, CommonUtility.fileUpload(emailfilePath,dataDirectory)); 
 				   }

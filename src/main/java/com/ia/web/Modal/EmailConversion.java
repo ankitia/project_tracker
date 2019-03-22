@@ -9,8 +9,15 @@ public class EmailConversion {
 	private String createdDate;
 	private String userName;
 	private String fullName;
+	private String filePath;
 	
 	
+	public String getFilePath() {
+		return filePath;
+	}
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
 	public int getProjectId() {
 		return projectId;
 	}

@@ -13,7 +13,6 @@ public class FeedBack {
 	private String userName;
 	private String fullName;
 	private String filePath;
-	private MultipartFile filePaths;
 	
 	
 	public String getFilePath() {

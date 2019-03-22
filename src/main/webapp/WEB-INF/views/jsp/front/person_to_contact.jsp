@@ -92,10 +92,11 @@ display: block;
 	  <br />  
        <table class="table table-hover table-bordered">
 	    <thead>
-	      <tr> 
+	      <tr>   
 	        <th width="3%">#</th>
-	        <th width="82%">Name</th>
-	        <th width="15%" style="text-align: center;">Active/DeActive</th> 
+	        <th width="67%">Name</th>
+	        <th width="15%" style="text-align: center;">Active/DeActive</th>
+	        <th width="15%" style="text-align: center;">Delete</th>  
 	      </tr>
 	    </thead>
 	    <tbody id="personList"> 
@@ -206,7 +207,7 @@ function getPersonContact(){
 					companyStatus = "<input type='checkbox' name='companyStatus' id='companyStatus_"+data[i].personContactId+"' onclick='updatecompanyStatus("+data[i].personContactId+")' >";
 			 	
 				 
-				$("#personList").append("<tr> <td width='3%'>"+ (i+1) +"</td><td width='82%'>"+data[i].name+"</td><td width='15%' style='text-align: center;'>"+companyStatus+"</td> </tr>"); 
+				$("#personList").append("<tr> <td>"+ (i+1) +"</td><td>"+data[i].name+"</td><td style='text-align: center;'>"+companyStatus+"</td> <td style='text-align: center;'><a href='#' onclick=\"deleteType("+data[i].personContactId+")\" ><i class='fa fa-times' aria-hidden='true'></i></a></td></tr>"); 
 			}
 		  }	
 			
@@ -288,6 +289,32 @@ function hideMessage(){
 	setTimeout(function(){ $("#login-alert").hide(); }, 5000);
 }
 
+function deleteType(typeId){
+  	
+	if(confirm("Are you sure you want to delete?")){
+		$.ajax({    
+			type : "POST", 
+			url  : "<%=request.getContextPath()%>/deleteData",
+			data : {  
+				typeId : typeId,
+				action : 'type'
+			}, 
+			success : function(data){
+				if(data){
+					$("#login-alert").show();  
+					$("#login-alert").html("Type deleted successfully.");	
+					hideMessage();
+					getPersonContact();  
+				}
+			},
+			error : function(e){
+				console.log("Error manageCompany -->"+e);
+			}
+		});  
+	}
+	
+	
+}
 
 </script>    
 

@@ -479,8 +479,11 @@ display: block;
 						    <input type="file" class="custom-file-input" id="exampleInputFile" name="exampleInputFile" aria-describedby="inputGroupFileAddon01">
 						    <label class="custom-file-label" for="exampleInputFile">Choose file</label>
 						  </div>
-						</div>	              
-						<a href="#" onclick="downloadFile('${project.sopPath }','upload')">Download</a>	        
+						</div>	                  
+						<c:if test="${fn:length(project.sopPath) > 0 }">
+							<a href="#" onclick="downloadFile('${project.sopPath }','upload')">Download</a>
+						</c:if>
+							        
 			      </div> 
 			     </div>
 			     <div class="col-lg-8">
@@ -671,7 +674,12 @@ display: block;
 				          <div class="outgoing_msg">
 			              <div class="sent_msg"> 
 			                <p>${emailList.emailLog }</p>    
-			                <span class="time_date">${emailList.fullName } | ${parsedDate }</span> </div>
+			                <span class="time_date">${emailList.fullName } | ${parsedDate } 
+			                   
+			               		 <c:if test="${fn:length(emailList.filePath) > 0 }">  
+			                		| <a href="#" onclick="downloadFile('${emailList.filePath }','emailconv')">Download</a>
+			                	</c:if>
+			                </span> </div>
 			            </div>
 	            	</c:when>
 	            	<c:otherwise>
@@ -680,7 +688,11 @@ display: block;
 			              <div class="received_msg">
 			                <div class="received_withd_msg">  
 			                  <p>${emailList.feedbackLog }</p> 
-			                  <span class="time_date">${emailList.fullName } | ${parsedDate }</span></div>
+			                  <span class="time_date">${emailList.fullName } | ${parsedDate }
+			                   <c:if test="${fn:length(emailList.filePath) > 0 }">  
+			                		| <a href="#" onclick="downloadFile('${emailList.filePath }','emailconv')">Download</a>
+			                	</c:if> 
+			                  </span></div>
 			              </div>
 			            </div>	
 	            	</c:otherwise>

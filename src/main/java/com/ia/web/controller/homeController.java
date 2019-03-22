@@ -629,9 +629,6 @@ public class homeController {
 				  array.add(object);
 			}
 			  
-			  
-			  
-			  
 			return array;
 		} 
 	    
@@ -651,7 +648,12 @@ public class homeController {
 		  }else if(action.equalsIgnoreCase("department")) {
 			  int id = Integer.parseInt(request.getParameter("departmentId"));
 			  return homeDao.deleteData(id, action, userId);
+		  }else if(action.equalsIgnoreCase("type")) {
+			  int id = Integer.parseInt(request.getParameter("typeId"));
+			  return homeDao.deleteData(id, action, userId);
 		  }
+		  
+		  
 		  return false;
 	  }
 }

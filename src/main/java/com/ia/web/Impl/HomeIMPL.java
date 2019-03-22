@@ -353,6 +353,8 @@ public class HomeIMPL implements HomeDAO {
 			sqlQuery = userDao.getString("deleteCompany");
 		}else if(action.equalsIgnoreCase("department")) {
 			sqlQuery = userDao.getString("deleteDepartment");
+		}else if(action.equalsIgnoreCase("type")) {
+			sqlQuery = userDao.getString("deleteType");
 		}
 		try(PreparedStatement ps = con.prepareStatement(sqlQuery)){
 			ps.setInt(1,deletedBy);
