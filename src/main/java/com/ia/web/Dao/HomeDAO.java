@@ -41,4 +41,6 @@ public interface HomeDAO {
 	public boolean insertScrap(Scrap scrap);
 	
 	
+	public boolean deleteData(int id,String action,int deletedBy);
+	
  }

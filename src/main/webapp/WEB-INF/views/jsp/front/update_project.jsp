@@ -151,7 +151,7 @@ display: block;
         </div>
        </div>
       <br />
-       
+           
       <form action="<%=request.getContextPath() %>/insertProject" method="post" enctype="multipart/form-data" >  
       
       
@@ -479,8 +479,8 @@ display: block;
 						    <input type="file" class="custom-file-input" id="exampleInputFile" name="exampleInputFile" aria-describedby="inputGroupFileAddon01">
 						    <label class="custom-file-label" for="exampleInputFile">Choose file</label>
 						  </div>
-						</div>	         
-						<a href="//${project.sopPath }" target="_blank"  >${project.sopPath }</a>	        
+						</div>	              
+						<a href="#" onclick="downloadFile('${project.sopPath }','upload')">Download</a>	        
 			      </div> 
 			     </div>
 			     <div class="col-lg-8">
@@ -543,8 +543,14 @@ display: block;
 	            	<c:when test="${feedbackList.createdBy == project.createdBy }">
 				          <div class="outgoing_msg">
 			              <div class="sent_msg"> 
-			                <p>${feedbackList.feedbackLog }</p>    
-			                <span class="time_date">${feedbackList.fullName } | ${parsedDate }</span> </div>
+			                <p>${feedbackList.feedbackLog }</p>   
+			                <span class="time_date">${feedbackList.fullName } | ${parsedDate } 
+			                	   
+			                	<c:if test="${fn:length(feedbackList.filePath) > 0 }">  
+			                		| <a href="#" onclick="downloadFile('${feedbackList.filePath }','feedback')">Download</a>
+			                	</c:if>
+			                
+			                </span> </div>
 			            </div>
 	            	</c:when>
 	            	<c:otherwise>
@@ -553,7 +559,7 @@ display: block;
 			              <div class="received_msg">
 			                <div class="received_withd_msg">  
 			                  <p>${feedbackList.feedbackLog }</p> 
-			                  <span class="time_date">${feedbackList.fullName } | ${parsedDate }</span></div>
+			                  <span class="time_date">${feedbackList.fullName } | ${parsedDate } | ${feedbackList.filePath }</span></div>
 			              </div>
 			            </div>	
 	            	</c:otherwise>
@@ -614,20 +620,6 @@ display: block;
       </div>
       </div>
       
-		  
-		  
-		  
-		  
-		  
-		  
-		  
-		  
-		  
-		  
-		  
-		  
-		  
-		  
 		  
 		  
 		  
@@ -703,10 +695,13 @@ display: block;
 		  
 		  </div>
 	   </div>
-</div>
+	   
+</div> 
+	<input class="btn btn-primary"  type="submit" name="submit" value="submit"> <br /><br /><br /><br /><br />  
 </div>
 
 <input type="hidden" name="projectId" value="${project.projectId }">
+
 
 </form>
 	<!-- Footer -->
@@ -714,6 +709,15 @@ display: block;
   
 <%--  <script src="<c:url value="/resources/front2/js/jquery/jquery.min.js"></c:url>"></script> --%>
     <script src="<c:url value="/resources/front2/js/bootstrap/bootstrap.bundle.min.js"></c:url>"></script>
+
+
+
+
+<form id="downloadFile" action="<%=request.getContextPath() %>/downloadFile" method="post" >
+	<input type="hidden" name="fileName" id="dnfileName" value="">
+	<input type="hidden" name="dirName" id="dirName" value="">  
+</form>
+
 
     
 <script type="text/javascript">
@@ -773,7 +777,13 @@ function insertProject(){
 	});
 	
 }
-
+  
+function downloadFile(fileName,dirName){
+	$("#dnfileName").val(fileName);
+	$("#dirName").val(dirName);
+	$( "#downloadFile" ).submit();
+	  
+} 
 
  
 

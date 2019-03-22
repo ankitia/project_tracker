@@ -1,5 +1,7 @@
 package com.ia.web.Modal;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public class FeedBack {
 
 	private int feedbackId;
@@ -10,8 +12,16 @@ public class FeedBack {
 	private String createdDate;
 	private String userName;
 	private String fullName;
+	private String filePath;
+	private MultipartFile filePaths;
 	
 	
+	public String getFilePath() {
+		return filePath;
+	}
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
 	public String getFullName() {
 		return fullName;
 	}

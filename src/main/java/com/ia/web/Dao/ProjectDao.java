@@ -41,7 +41,7 @@ public interface ProjectDao {
 	List<FeedBackAttachment> getFeedbackAttechment(int feedbackId);
 
 	//Insert new feedback
-	boolean insertFeedback(FeedBack feedBack);
+	int insertFeedback(FeedBack feedBack);
 	
 	//Insert new project
 	boolean insertFeedbackAttechment(FeedBackAttachment feedBackAttachment);
@@ -54,10 +54,10 @@ public interface ProjectDao {
 	List<FeedBackAttachment> getEmailConvAttechment(int feedbackId);*/
 
 	//Insert new feedback
-	boolean insertEmailConv(EmailConversion emailConversion);
+	int insertEmailConv(EmailConversion emailConversion);
 	
-/*	//Insert new project
-	boolean insertFeedbackAttechment(FeedBackAttachment feedBackAttachment);*/
+	//Insert new project
+	boolean insertEmailConvAttechment(int emailConId,String filePath);
 		
 	
 }

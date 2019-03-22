@@ -2,6 +2,7 @@ package com.ia.web.Impl;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -260,12 +261,13 @@ public class ProjectImpl implements ProjectDao {
 				FeedBack feedBack = new FeedBack();
 				feedBack.setFeedbackId(rs.getInt("project_feedback_id"));
 				feedBack.setFeedbackLog(rs.getString("fed_log"));
-				feedBack.setEscalationLog(rs.getString("escalation_log"));
+				/*feedBack.setEscalationLog(rs.getString("escalation_log"));*/
 				feedBack.setProjectId(rs.getInt("project_feedback_id"));
 				feedBack.setCreatedBy(rs.getInt("created_by"));
 				feedBack.setCreatedDate(rs.getString("created_date"));
 				feedBack.setUserName(rs.getString("username"));
 				feedBack.setFullName(rs.getString("fname")+" "+rs.getString("lname"));
+				feedBack.setFilePath(rs.getString("file_path"));
 				feedBacks.add(feedBack);
 			}
 		}catch (Exception e) {
@@ -300,22 +302,26 @@ public class ProjectImpl implements ProjectDao {
 	}
 
 	@Override
-	public boolean insertFeedback(FeedBack feedBack) {
-		try(PreparedStatement ps = con.prepareStatement(userDao.getString("insertFeedback"))){
+	public int insertFeedback(FeedBack feedBack) {
+		
+		int status = 0;
+		try(PreparedStatement ps = con.prepareStatement(userDao.getString("insertFeedback"),Statement.RETURN_GENERATED_KEYS)){
 			ps.setString(1,feedBack.getFeedbackLog());
 			ps.setString(2,feedBack.getEscalationLog());
 			ps.setInt(3,feedBack.getProjectId());
 			ps.setInt(4, feedBack.getCreatedBy());
-			int status = ps.executeUpdate();
-
-			if(status>0)
-				return true;
+			ps.executeUpdate();
+			ResultSet rs=ps.getGeneratedKeys();
+			if(rs.next()){
+				status=rs.getInt(1);
+			}
+			
 			
 		}catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
-		return false;
+		return status;
 	}
 
 	@Override
@@ -363,11 +369,32 @@ public class ProjectImpl implements ProjectDao {
 	}
 
 	@Override
-	public boolean insertEmailConv(EmailConversion emailConversion) {
-		try(PreparedStatement ps = con.prepareStatement(userDao.getString("insertEmailConv"))){
+	public int insertEmailConv(EmailConversion emailConversion) {
+		int status = 0;
+		try(PreparedStatement ps = con.prepareStatement(userDao.getString("insertEmailConv"),Statement.RETURN_GENERATED_KEYS)){
 			ps.setString(1,emailConversion.getEmailLog());
 			ps.setInt(2,emailConversion.getProjectId());
 			ps.setInt(3, emailConversion.getCreatedBy());
+			ps.executeUpdate();
+
+			ResultSet rs=ps.getGeneratedKeys();
+			if(rs.next()){
+				status=rs.getInt(1);
+			}
+			
+		}catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return status;
+	}
+
+	@Override
+	public boolean insertEmailConvAttechment(int emailConId, String filePath) {
+		try(PreparedStatement ps = con.prepareStatement(userDao.getString("insertFeedbackAttechment"))){
+			ps.setString(1,filePath);
+			ps.setInt(2,emailConId);
+			
 			int status = ps.executeUpdate();
 
 			if(status>0)

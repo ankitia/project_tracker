@@ -1,10 +1,7 @@
+
 package com.ia.web.controller;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,9 +17,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.ia.config.CommonUtility;
 import com.ia.web.Dao.CompanyDao;
@@ -33,6 +30,7 @@ import com.ia.web.Modal.CompanyMaster;
 import com.ia.web.Modal.DepartmentMaster;
 import com.ia.web.Modal.EmailConversion;
 import com.ia.web.Modal.FeedBack;
+import com.ia.web.Modal.FeedBackAttachment;
 import com.ia.web.Modal.PersonContact;
 import com.ia.web.Modal.Project;
 import com.ia.web.Modal.ProjectView;
@@ -78,6 +76,11 @@ public class ManagerController {
 	
 	}
   
+	@RequestMapping(value = "/getCompanyList")
+	@ResponseBody public List<CompanyMaster> getCompanyList() {
+		return companyDao.getCompany("all");
+	}
+	
 	/* End Manage  Company */
 	
 	/* Start Manage  Department */
@@ -125,70 +128,61 @@ public class ManagerController {
 	}
 	
 	@RequestMapping(value="/insertProjects", method= RequestMethod.POST)
-	 public String insertProjects(Project project,HttpSession session,HttpServletRequest request){
+	 public String insertProjects(Project project,HttpSession session,MultipartHttpServletRequest multipartRequest,HttpServletRequest request,FeedBack feedBack){
 		
 		   project.setStartDate(CommonUtility.getDate(project.getStartDate()));
 		   project.setDeliveryDate(CommonUtility.getDate(project.getDeliveryDate()));
 		
+		   MultipartFile file = multipartRequest.getFile("exampleInputFile") ;
+		   String dataDirectory = request.getServletContext().getRealPath("/resources/upload/");
+		   if(!file.isEmpty()) {
+			   project.setSopPath(CommonUtility.fileUpload(file,dataDirectory));
+		   }
+		   
+		   
 		 projectDao.insertProject(project);
+		 
+		 
+		 
+		 
+		 
+		 /*MultipartFile filePath = multipartRequest.getFile("filePath") ;
+		    
+		 dataDirectory = request.getServletContext().getRealPath("/resources/feedback/");
+		 if(!filePath.isEmpty()) {
+			 FeedBackAttachment attachment = new FeedBackAttachment();
+			 System.out.println(filePath.getOriginalFilename());
+			 attachment.setFeedbackId(25);
+			 attachment.setFilePath(CommonUtility.fileUpload(filePath,dataDirectory));
+			 projectDao.insertFeedbackAttechment(attachment); 
+		   }*/
+		 
+		 
+		 
 		 return "redirect:dashboard";
 	}
 	
 	 @RequestMapping(value="/insertProject")
-	 public String insertProject(@RequestParam("exampleInputFile") MultipartFile file,Project project,HttpSession session,HttpServletRequest request,FeedBack feedBack,EmailConversion emailConversion){
+	 public String insertProject(MultipartHttpServletRequest multipartRequest,Project project,HttpSession session,HttpServletRequest request){
 
-		 System.out.println(project.getStartDate() +""+ project.getName());
-		 
-		 System.out.println("Request path ::::"+ request.getContextPath()+"/resources/upload");
-		 
+		   int userId = (Integer) session.getAttribute("userId");
 		 
 		   project.setStartDate(CommonUtility.getDate(project.getStartDate()));
 		   project.setNextUpdateDate(CommonUtility.getDate(project.getNextUpdateDate()));
 		   project.setDeliveryDate(CommonUtility.getDate(project.getDeliveryDate()));
-		 
-		   if (!file.isEmpty()) {
-			   project.setSopPath(CommonUtility.fileUpload(file));
+		   
+		   
+		   MultipartFile file = multipartRequest.getFile("exampleInputFile") ;
+		   String dataDirectory = request.getServletContext().getRealPath("/resources/upload/");
+		   if(!file.isEmpty()) {
+			   project.setSopPath(CommonUtility.fileUpload(file,dataDirectory));
 		   }
 		   
-		 	/*String path = "";
-			String orignalFileName = file.getName();
-
-			if (!file.isEmpty()) {
-				try {
-					orignalFileName = file.getOriginalFilename();
-					byte[] bytes = file.getBytes();
-
-					// Creating the directory to store file
-					String rootPath = System.getProperty("catalina.home");
-					path = rootPath + File.separator + "tmpFiles";
-					String rootPath = request.getContextPath()+"/resources/";
-					path = rootPath + File.separator + "upload";
-					File dir = new File(path);
-					if (!dir.exists())
-						dir.mkdirs();
-
-					// Create the file on server
-					path = dir.getAbsolutePath() + File.separator + orignalFileName;
-					File serverFile = new File(dir.getAbsolutePath() + File.separator + orignalFileName);
-					BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
-					stream.write(bytes);
-					stream.close();
-					
-					//System.out.println(ext+"---path-->"+path+"----"+orignalFileName+"--------------"+dir.getAbsolutePath());
-					System.out.println("Server File Location="+ serverFile.getAbsolutePath());
-					project.setSopPath(serverFile.getAbsolutePath());
-					//return "You successfully uploaded file=" + name;
-				} catch (Exception e) {
-					//return "You failed to upload " + name + " => " + e.getMessage();
-					System.out.println("Error ---"+e);
-				}
-			} else {
-				//return "You failed to upload " + name + " because the file was empty.";
-				System.out.println("File is empty");
-			}*/
 		 
-		 
-		 project.setCreatedBy((Integer) session.getAttribute("userId"));
+		   
+		   
+		   
+		 project.setCreatedBy(userId);
 		 
 		 System.out.println("Project Id ::"+project.getProjectId());
 		 
@@ -197,23 +191,52 @@ public class ManagerController {
 			 
 			  
 			 boolean status = false;
-			 if(!feedBack.getFeedbackLog().equalsIgnoreCase("")) {
-				 /* Add new feedback */
+			 String feedbackLog = request.getParameter("feedbackLog");
+			 if(!feedbackLog.equalsIgnoreCase("")) {
+				  
+				 FeedBack feedBack = new FeedBack();
+				 feedBack.setFeedbackLog(feedbackLog);
 				 feedBack.setProjectId(project.getProjectId());
-				 feedBack.setCreatedBy((Integer) session.getAttribute("userId"));
-				 projectDao.insertFeedback(feedBack);	 
+				 feedBack.setCreatedBy(userId);
+				 int feedbackId = projectDao.insertFeedback(feedBack);	 
+				 
+				 //dataDirectory = request.getServletContext().getRealPath("/resources/feedback/"+userId+"/");
+				 MultipartFile filePath = multipartRequest.getFile("filePath") ;
+				    
+				 dataDirectory = request.getServletContext().getRealPath("/resources/feedback/");
+				 if(!filePath.isEmpty()) {
+					 FeedBackAttachment attachment = new FeedBackAttachment();
+					 System.out.println(filePath.getOriginalFilename());
+					 attachment.setFeedbackId(feedbackId);
+					 attachment.setFilePath(CommonUtility.fileUpload(filePath,dataDirectory));
+					 projectDao.insertFeedbackAttechment(attachment); 
+				   }
+				 
 				 status = true;
 			 }
 			 
-			 if(!emailConversion.getEmailLog().equalsIgnoreCase("")) {
+			 String emailLog = request.getParameter("emailLog");
+			  if(!emailLog.equalsIgnoreCase("")) {
+				  EmailConversion emailConversion = new EmailConversion();
+				  emailConversion.setEmailLog(emailLog);
 				 emailConversion.setProjectId(project.getProjectId());
-				 emailConversion.setCreatedBy((Integer) session.getAttribute("userId"));
-				 projectDao.insertEmailConv(emailConversion);
+				 emailConversion.setCreatedBy(userId);
+				 int emailConvId = projectDao.insertEmailConv(emailConversion);
+				 
+				 
+				 
+				 MultipartFile emailfilePath = multipartRequest.getFile("emailfilePath") ;
+				    
+				 dataDirectory = request.getServletContext().getRealPath("/resources/feedback/");
+				 if(!emailfilePath.isEmpty()) {
+					 projectDao.insertEmailConvAttechment(emailConvId, CommonUtility.fileUpload(emailfilePath,dataDirectory)); 
+				   }
+				 
 				 status = true;
 			 }
 			 
 			 if(status) {
-				 return "redirect:updateProject/"+feedBack.getProjectId();
+				 return "redirect:updateProject/"+project.getProjectId();
 			 }
 			 
 			 
@@ -300,15 +323,21 @@ public class ManagerController {
 	}
 	
 	
-	@RequestMapping(value = "/files/{file_name}", method = RequestMethod.GET)
-	public void getFile(HttpServletRequest request, @PathVariable("file_name") String fileName, HttpServletResponse response) {
+	@RequestMapping(value = "/downloadFile", method = RequestMethod.POST)
+	@ResponseBody public void downloadFile(HttpServletRequest request, HttpServletResponse response) {
 	   
-		
+		System.out.println("This is call");
 		//Authorized user will download the file
-        String dataDirectory = request.getServletContext().getRealPath("/WEB-INF/downloads/pdf/");
+		String fileName =  request.getParameter("fileName"); //"tempo.msg"; 
+		String dirName  = request.getParameter("dirName"); 
+        String dataDirectory = request.getServletContext().getRealPath("/resources/"+dirName+"/");
         Path file = Paths.get(dataDirectory, fileName);
+        
+        System.out.println(dataDirectory +"---"+fileName);
+        System.out.println(Files.exists(file));
         if (Files.exists(file))
         {
+        	System.out.println("True");
             response.setContentType("application/pdf");
             response.addHeader("Content-Disposition", "attachment; filename="+fileName);
             try

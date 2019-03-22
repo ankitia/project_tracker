@@ -92,7 +92,38 @@ public class CommonUtility
 		 return convertDate;
 	 }
 	 
-	 public static String fileUpload(MultipartFile file) {
+	 public static String fileUpload(MultipartFile file,String dataDirectory) {
+			String orignalFileName = file.getName();
+			if (!file.isEmpty()) {
+				try {
+					orignalFileName = file.getOriginalFilename();
+					byte[] bytes = file.getBytes();
+
+					File dir = new File(dataDirectory);
+					if (!dir.exists())
+						dir.mkdirs();
+
+					// Create the file on server
+					dataDirectory = dir.getAbsolutePath() + File.separator + orignalFileName;
+					File serverFile = new File(dir.getAbsolutePath() + File.separator + orignalFileName);
+					BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
+					stream.write(bytes);
+					stream.close();
+					System.out.println("File uploaded success fully"+dataDirectory);
+					return orignalFileName;
+					//return "You successfully uploaded file=" + name;
+				} catch (Exception e) {
+					//return "You failed to upload " + name + " => " + e.getMessage();
+					System.out.println("Error ---"+e);
+				}
+			} else {
+				//return "You failed to upload " + name + " because the file was empty.";
+				System.out.println("File is empty");
+			}
+		 return "";
+	 }
+	 
+ public static String fileUploads(MultipartFile file) {
 		 
 		 String path = "";
 			String orignalFileName = file.getName();

@@ -72,8 +72,8 @@ display: block;
       <div class="row"> 
         <div class="col-lg-12"> 
         	<p class="text-right mt-6" >     
-         		<div id="login-alert" style="display: none;" class="alert alert-danger col-sm-9 float-left mt-6">No company available.</div>   
-         	</p> 
+         		<div id="login-alert" style="display: none;margin-left: 15px;" class="alert alert-danger col-sm-9 float-left mt-6">No company available.</div>   
+         	</p>  
          	
          	 
       <main role="main" class="container">
@@ -85,15 +85,16 @@ display: block;
 	    <thead>
 	      <tr>
 	        <th width="3%">#</th>
-	        <th width="17%">Name</th>
-	        <th width="65%">Description</th>
+	        <th width="17%">Name</th> 
+	        <th width="50%">Description</th>
 	        <th width="15%" style="text-align: center;">Active/DeActive</th>
+	        <th width="15%" style="text-align: center;">Delete</th> 
 	      </tr>
 	    </thead>
 	    <tbody id="companyList">
 	    	<c:if test="${fn:length(companyList) == 0 }">
     			<tr>  
-    				<td colspan="4">
+    				<td colspan="5">
     					<div id="login-alert" class="alert alert-danger col-sm-12">No company available.</div>
     				</td>
     			</tr> 
@@ -112,7 +113,8 @@ display: block;
 			        			<input type="checkbox" name="companyStatus"  onclick="updatecompanyStatus('${companyList.companyId}')" id="companyStatus_${companyList.companyId}" >
 			        		</c:otherwise>			        	
 			        	</c:choose>
-			        </td>
+			        </td>     
+			        <td align="center"><a href="#" onclick="deleteCompnay(${companyList.companyId})" ><i class="fa fa-times" aria-hidden="true"></i></a></td> 
 			      </tr>
 	    	</c:forEach>
 	    </tbody>
@@ -184,23 +186,11 @@ function manageCompany(action){
 		},
 		success : function(data){
 			//alert(data);
-			    
-			$("#companyList").empty();
-			
-			for (var i = 0; i < data.length; i++) { 
-				var companyStatus = "";
-				if(data[i].status=="Active")
-					companyStatus = "<input type='checkbox' name='companyStatus' id='companyStatus_"+data[i].companyId+"' onclick='updatecompanyStatus('"+data[i].companyId+"')'>";	
-				else	
-					companyStatus = "<input type='checkbox' name='companyStatus' id='companyStatus_"+data[i].companyId+"' onclick='updatecompanyStatus('"+data[i].companyId+"')' checked='checked'>";
-			 	
-				 
-				$("#companyList").append("<tr> <td width='3%'>"+ (i+1) +"</td><td width='17%'>"+data[i].companyName+"</td><td width='65%'>"+data[i].companyDesc+"</td><td width='15%' style='text-align: center;'>"+companyStatus+"</td> </tr>"); 
-			} 
+			getCompanyList();
+			hideMessage();
 			$("#login-alert").show(); 
 			$("#login-alert").html("company added successfully.");	
-			hideMessage();
-			$('#myModal').modal('hide');
+			$('#myModal').modal('hide');   
 
 		},
 		error : function(e){
@@ -241,6 +231,58 @@ function hideMessage(){
 	setTimeout(function(){ $("#login-alert").hide(); }, 5000);
 }
 
+function deleteCompnay(companyId){
+  	
+	if(confirm("Are you sure you want to delete?")){
+		$.ajax({    
+			type : "POST", 
+			url  : "<%=request.getContextPath()%>/deleteData",
+			data : {  
+				companyId : companyId,
+				action : 'company'
+			}, 
+			success : function(data){
+				if(data){
+					$("#login-alert").show();  
+					$("#login-alert").html("Company deleted successfully.");	
+					hideMessage();
+					getCompanyList();
+				}
+			},
+			error : function(e){
+				console.log("Error manageCompany -->"+e);
+			}
+		});  
+	}
+	
+	
+}
+
+function getCompanyList(){
+	$.ajax({
+		type : "GET",
+		url  : "<%=request.getContextPath()%>/getCompanyList",
+		data : { 
+			 
+		},
+		success : function(data){
+			$("#companyList").empty();			
+			for (var i = 0; i < data.length; i++) { 
+				var companyStatus = "";
+				if(data[i].status=="Active")  
+					companyStatus = "<input type='checkbox' name='companyStatus' id='companyStatus_"+data[i].companyId+"' onclick=\"updatecompanyStatus('"+data[i].companyId+"')\" checked='checked'>";	
+				else	  
+					companyStatus = "<input type='checkbox' name='companyStatus' id='companyStatus_"+data[i].companyId+"' onclick=\"updatecompanyStatus('"+data[i].companyId+"')\">";
+			 	
+				      
+				$("#companyList").append("<tr> <td>"+ (i+1) +"</td><td>"+data[i].companyName+"</td><td>"+data[i].companyDesc+"</td><td style='text-align: center;'>"+companyStatus+"</td><td style='text-align: center;'><a href='#' onclick=\"deleteCompnay("+data[i].companyId+")\" ><i class='fa fa-times' aria-hidden='true'></i></a></td></tr>"); 
+			} 
+		},
+		error : function(e){
+			console.log("Error manageCompany -->"+e);
+		}
+	});
+}
 
 </script>    
 

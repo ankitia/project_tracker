@@ -635,5 +635,23 @@ public class homeController {
 			return array;
 		} 
 	    
-	
+
+	  @RequestMapping(value = "/deleteData", method = RequestMethod.POST)
+	  @ResponseBody public boolean deleteData(HttpServletRequest request,HttpSession session)
+	  {
+		  String action = request.getParameter("action");
+		  
+		  int userId = Integer.parseInt(session.getAttribute("userId")+"");
+		  
+		  System.out.println(action +"--"+userId);
+		  
+		  if(action.equalsIgnoreCase("company")) {
+			  int id = Integer.parseInt(request.getParameter("companyId"));
+			  return homeDao.deleteData(id, action, userId);
+		  }else if(action.equalsIgnoreCase("department")) {
+			  int id = Integer.parseInt(request.getParameter("departmentId"));
+			  return homeDao.deleteData(id, action, userId);
+		  }
+		  return false;
+	  }
 }

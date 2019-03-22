@@ -97,14 +97,15 @@ display: block;
 	      <tr>
 	        <th width="3%">#</th>
 	        <th width="17%">Name</th>
-	        <th width="65%">Description</th>
+	        <th width="50%">Description</th>
 	        <th width="15%" style="text-align: center;">Active/DeActive</th>
+	        <th width="15%" style="text-align: center;">Delete</th>
 	      </tr>
 	    </thead>
 	    <tbody id="DepartmentList">
 	    	<c:if test="${fn:length(departmentList) == 0 }">
-    			<tr>
-    				<td colspan="4">
+    			<tr> 
+    				<td colspan="5">
     					<div id="login-alert" class="alert alert-danger col-sm-12">No Department available.</div>
     				</td>
     			</tr> 
@@ -158,7 +159,7 @@ display: block;
        
       </div>
       <div class="modal-footer">
-      	<button type="submit" class="btn btn-primary" onclick="manageDepartment('insert')" >Save</button>
+      	<button type="button" class="btn btn-primary" onclick="manageDepartment('insert')" >Save</button>
         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
       </div>
     </div>
@@ -178,6 +179,7 @@ display: block;
 <script type="text/javascript">
 
 function getDepartment(){
+	$("#comapnyId").val($("#comapny").val()); 
 	$("#DepartmentList").empty(); 
 	$.ajax({
 		type : "POST",
@@ -189,8 +191,8 @@ function getDepartment(){
 		success : function(data){
 				 
 				 
-			if(data.length==0){  
-				$("#DepartmentList").append("<tr> <td colspan='4'><div id='login-alert' class='alert alert-danger col-sm-12'>No Department available.</div></td></tr>");
+			if(data.length==0){   
+				$("#DepartmentList").append("<tr> <td colspan='5'><div id='login-alert' class='alert alert-danger col-sm-12'>No Department available.</div></td></tr>");
 			}else{
 				for (var i = 0; i < data.length; i++) { 
 					var DepartmentStatus = "";
@@ -200,7 +202,7 @@ function getDepartment(){
 					else	
 						DepartmentStatus = "<input type='checkbox' name='DepartmentStatus' id='DepartmentStatus_"+data[i].departmentId+"' onclick='updateDepartmentStatus("+data[i].departmentId+")'>";
 					 
-					$("#DepartmentList").append("<tr> <td width='3%'>"+ (i+1) +"</td><td width='17%'>"+data[i].departmentName+"</td><td width='65%'>"+data[i].departmentDesc+"</td><td width='15%' style='text-align: center;'>"+DepartmentStatus+"</td> </tr>"); 
+					$("#DepartmentList").append("<tr> <td>"+ (i+1) +"</td><td>"+data[i].departmentName+"</td><td>"+data[i].departmentDesc+"</td><td style='text-align: center;'>"+DepartmentStatus+"</td><td style='text-align: center;'><a href='#' onclick=\"deleteDepartment("+data[i].departmentId+")\" ><i class='fa fa-times' aria-hidden='true'></i></a></td> </tr>"); 
 				}
 			}	
 		},
@@ -272,6 +274,29 @@ function hideMessage(){
 	setTimeout(function(){ $("#login-alert").hide(); }, 5000);
 }
 
+function deleteDepartment(departmentId){
+	if(confirm("Are you sure you want to delete?")){
+		$.ajax({    
+			type : "POST", 
+			url  : "<%=request.getContextPath()%>/deleteData",
+			data : {  
+				departmentId : departmentId,
+				action : 'department'
+			}, 
+			success : function(data){ 
+				if(data){
+					$("#login-alert").show();  
+					$("#login-alert").html("Department deleted successfully.");	
+					hideMessage();
+					getDepartment();
+				}
+			},
+			error : function(e){
+				console.log("Error manageCompany -->"+e);
+			}
+		});  
+	}
+}
 
 </script>    
 
