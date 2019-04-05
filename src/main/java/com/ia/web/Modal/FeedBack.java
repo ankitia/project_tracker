@@ -1,7 +1,5 @@
 package com.ia.web.Modal;
 
-import org.springframework.web.multipart.MultipartFile;
-
 public class FeedBack {
 
 	private int feedbackId;

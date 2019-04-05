@@ -100,8 +100,6 @@ public class DatasetImpl implements DatasetDao {
 	public boolean insertDataset(Dataset dataset) {
 		// TODO Auto-generated method stub
 		int status = 0;
-		String query = "";
-		
 		try {
 			PreparedStatement ps = con.prepareStatement(userDao.getString("insertDataset"));
 			ps.setInt(1, dataset.getUserId());

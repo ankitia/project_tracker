@@ -142,7 +142,7 @@
 			 
 				  <fieldset class="form-group">
 				    <legend>Select option you want to scrap</legend>
-				    <div class="form-check" al>
+				    <div class="form-check">
 				      <label class="form-check-label">
 				        <input type="radio"  class="form-check-input radio_button" name="optionsRadios" id="optionsAddress" value="Address" checked>
 				        Address &nbsp;&nbsp; 

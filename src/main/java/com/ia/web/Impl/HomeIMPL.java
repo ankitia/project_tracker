@@ -31,7 +31,7 @@ public class HomeIMPL implements HomeDAO {
 	@Override
 	public User checkUser(String userName, String password) throws SQLException {
 		// TODO Auto-generated method stub
-		int userId = 0;
+		//int userId = 0;
 		User user = new User();
 				
 		try{			 
@@ -45,7 +45,7 @@ public class HomeIMPL implements HomeDAO {
 			statement.setString(2, password);
 			ResultSet rs = statement.executeQuery();	
 				while (rs.next()) {
-					userId = rs.getInt("user_id");					
+					//userId = rs.getInt("user_id");					
 					user.setUserId(rs.getInt("user_id"));
 					user.setFname(rs.getString("fname"));
 					user.setLimit(rs.getInt("limit"));
